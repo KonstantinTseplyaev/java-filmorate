@@ -80,8 +80,8 @@ class FilmControllerTest {
     public void postFilms_whenDescriptionsLengthIs201() throws Exception {
         Film film = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлпппппппппппппппп" +
                         "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп" +
-                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппп").
-                releaseDate(LocalDate.of(1995, 9, 22))
+                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппп")
+                .releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
                 .id(1)
                 .build();
@@ -96,8 +96,8 @@ class FilmControllerTest {
     public void postFilms_whenDescriptionsLengthIs200() throws Exception {
         Film film = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлпппппппппппппппп" +
                         "пппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп" +
-                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппп").
-                releaseDate(LocalDate.of(1995, 9, 22))
+                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппп")
+                .releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
                 .id(1)
                 .build();
@@ -110,8 +110,8 @@ class FilmControllerTest {
 
     @Test
     public void postFilms_whenReleaseDateIs27December1895() throws Exception {
-        Film film = Film.builder().name("Seven").description("niceFilm").
-                releaseDate(LocalDate.of(1895, 12, 27))
+        Film film = Film.builder().name("Seven").description("niceFilm")
+                .releaseDate(LocalDate.of(1895, 12, 27))
                 .duration(80)
                 .id(1)
                 .build();
@@ -125,8 +125,8 @@ class FilmControllerTest {
 
     @Test
     public void postFilms_whenReleaseDateIs28December1895() throws Exception {
-        Film film = Film.builder().name("Seven").description("niceFilm").
-                releaseDate(LocalDate.of(1895, 12, 28))
+        Film film = Film.builder().name("Seven").description("niceFilm")
+                .releaseDate(LocalDate.of(1895, 12, 28))
                 .duration(80)
                 .id(1)
                 .build();
@@ -320,8 +320,8 @@ class FilmControllerTest {
         addFilmsForUpdate();
         Film film1Update = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлппппппп" +
                         "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп" +
-                        "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп").
-                releaseDate(LocalDate.of(1995, 9, 22))
+                        "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп")
+                .releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
                 .id(1)
                 .build();
@@ -341,8 +341,8 @@ class FilmControllerTest {
     @Test
     public void putFilms_whenReleaseDateIs27December1895() throws Exception {
         addFilmsForUpdate();
-        Film film1Update = Film.builder().name("Seven").description("niceFilm").
-                releaseDate(LocalDate.of(1895, 12, 27))
+        Film film1Update = Film.builder().name("Seven").description("niceFilm")
+                .releaseDate(LocalDate.of(1895, 12, 27))
                 .duration(80)
                 .id(1)
                 .build();
