@@ -107,7 +107,7 @@ class UserControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(user1)))
                 .andExpect(status().is(400))
-                .andExpect(content().bytes("логин не должен содержать пробелы".getBytes()));
+                .andExpect(content().json(objectMapper.writeValueAsString(user1)));
     }
 
     @Test
@@ -262,7 +262,7 @@ class UserControllerTest {
                         put("/users")
                                 .content(objectMapper.writeValueAsString(user2Up))
                                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(400));
+                .andExpect(status().is(500));
         mockMvc.perform(
                         put("/users")
                                 .content(objectMapper.writeValueAsString(user3Up))
@@ -290,8 +290,8 @@ class UserControllerTest {
                         put("/users")
                                 .content(objectMapper.writeValueAsString(userUp))
                                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(400))
-                .andExpect(content().bytes("пользователя с таким id не существует".getBytes()));
+                .andExpect(status().is(500))
+                .andExpect(content().json(objectMapper.writeValueAsString(userUp)));
     }
 
     public void addUsersForUpdate() throws Exception {

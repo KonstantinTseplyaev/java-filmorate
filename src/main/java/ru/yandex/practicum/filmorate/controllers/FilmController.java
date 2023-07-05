@@ -43,7 +43,8 @@ public class FilmController {
                     .body(film);
         } catch (ValidationException exp) {
             return ResponseEntity.status(400)
-                    .body(exp.getMessage());
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(film);
         }
     }
 
@@ -66,8 +67,9 @@ public class FilmController {
                 throw new ValidationException("фильма с таким id не суещствует");
             }
         } catch (ValidationException exp) {
-            return ResponseEntity.status(400) //из-за того, что в случае некорректного id или даты релиза у меня в ответе пользователю отправляется месседж ошибки вместо тела фильма, не проходит несколько тестов в Postman, решил пока оставить так, думаю, это более информативно для пользователя
-                    .body(exp.getMessage());
+            return ResponseEntity.status(500)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(film);
         }
     }
 

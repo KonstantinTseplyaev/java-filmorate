@@ -43,7 +43,8 @@ public class UserController {
                     .body(user);
         } catch (ValidationException exp) {
             return ResponseEntity.status(400)
-                    .body(exp.getMessage());
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(user);
         }
     }
 
@@ -65,8 +66,9 @@ public class UserController {
                 throw new ValidationException("пользователя с таким id не существует");
             }
         } catch (ValidationException exp) {
-            return ResponseEntity.status(400)
-                    .body(exp.getMessage());
+            return ResponseEntity.status(500)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(user);
         }
     }
 

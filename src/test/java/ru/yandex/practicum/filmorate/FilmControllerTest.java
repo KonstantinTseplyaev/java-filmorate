@@ -120,7 +120,7 @@ class FilmControllerTest {
                                 .content(objectMapper.writeValueAsString(film))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(400))
-                .andExpect(content().bytes("недопустимая дата релиза".getBytes()));
+                .andExpect(content().json(objectMapper.writeValueAsString(film)));
     }
 
     @Test
@@ -270,8 +270,8 @@ class FilmControllerTest {
                         put("/films")
                                 .content(objectMapper.writeValueAsString(film1Update))
                                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(400))
-                .andExpect(content().bytes("фильма с таким id не суещствует".getBytes()));
+                .andExpect(status().is(500))
+                .andExpect(content().json(objectMapper.writeValueAsString(film1Update)));
     }
 
     @Test
@@ -351,7 +351,7 @@ class FilmControllerTest {
                         put("/films")
                                 .content(objectMapper.writeValueAsString(film1Update))
                                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(400));
+                .andExpect(status().is(500));
         mockMvc.perform(
                         get("/films")
                                 .contentType(MediaType.APPLICATION_JSON))
@@ -391,8 +391,8 @@ class FilmControllerTest {
                         put("/films")
                                 .content(objectMapper.writeValueAsString(film1Update))
                                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(400))
-                .andExpect(content().bytes("фильма с таким id не суещствует".getBytes()));
+                .andExpect(status().is(500))
+                .andExpect(content().json(objectMapper.writeValueAsString(film1Update)));
     }
 
     public void addFilmsForUpdate() throws Exception {
