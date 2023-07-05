@@ -78,8 +78,9 @@ class FilmControllerTest {
 
     @Test
     public void postFilms_whenDescriptionsLengthIs201() throws Exception {
-        Film film = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлпппппппппппппппппп" +
-                        "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп").
+        Film film = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлпппппппппппппппп" +
+                        "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп" +
+                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппп").
                 releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
                 .id(1)
@@ -93,8 +94,9 @@ class FilmControllerTest {
 
     @Test
     public void postFilms_whenDescriptionsLengthIs200() throws Exception {
-        Film film = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлпппппппппппппппппп" +
-                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп").
+        Film film = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлпппппппппппппппп" +
+                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп" +
+                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппп").
                 releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
                 .id(1)
@@ -137,7 +139,8 @@ class FilmControllerTest {
 
     @Test
     public void postFilms_whenDurationIsZero() throws Exception {
-        Film film = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995, 9, 22))
+        Film film = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995,
+                        9, 22))
                 .duration(0)
                 .id(1)
                 .build();
@@ -150,7 +153,8 @@ class FilmControllerTest {
 
     @Test
     public void postFilms_whenDurationIsNegative() throws Exception {
-        Film film = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995, 9, 22))
+        Film film = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995,
+                        9, 22))
                 .duration(-1)
                 .id(1)
                 .build();
@@ -172,7 +176,8 @@ class FilmControllerTest {
 
     @Test
     public void getFilms_whenWereAddedValidFilms() throws Exception {
-        Film film3 = Film.builder().name("Enter the Void").description("niceFilm").releaseDate(LocalDate.of(2019, 7, 7))
+        Film film3 = Film.builder().name("Enter the Void").description("niceFilm").releaseDate(LocalDate.of(2019,
+                        7, 7))
                 .duration(100)
                 .id(3)
                 .build();
@@ -198,7 +203,8 @@ class FilmControllerTest {
 
     @Test
     public void getFilms_whenWereAddedNotValidFilms() throws Exception {
-        Film film1 = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995, 9, 22))
+        Film film1 = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995, 9,
+                        22))
                 .duration(-80)
                 .id(1)
                 .build();
@@ -206,7 +212,8 @@ class FilmControllerTest {
                 .duration(90)
                 .id(2)
                 .build();
-        Film film3 = Film.builder().name("Enter the Void").description("niceFilm").releaseDate(LocalDate.of(1019, 7, 7))
+        Film film3 = Film.builder().name("Enter the Void").description("niceFilm").releaseDate(LocalDate.of(1019,
+                        7, 7))
                 .duration(100)
                 .id(3)
                 .build();
@@ -232,7 +239,8 @@ class FilmControllerTest {
     @Test
     public void putFilms_whenFilmAttributesAreNotEmptyAndCorrect() throws Exception {
         addFilmsForUpdate();
-        Film film1Update = Film.builder().name("SevenUp").description("niceFilmUp").releaseDate(LocalDate.of(2000, 9, 22))
+        Film film1Update = Film.builder().name("SevenUp").description("niceFilmUp").releaseDate(LocalDate.of(2000,
+                        9, 22))
                 .duration(85)
                 .id(1)
                 .build();
@@ -253,7 +261,8 @@ class FilmControllerTest {
     @Test
     public void putFilms_whenFilmHasIncorrectId() throws Exception {
         addFilmsForUpdate();
-        Film film1Update = Film.builder().name("SevenUp").description("niceFilmUp").releaseDate(LocalDate.of(2000, 9, 22))
+        Film film1Update = Film.builder().name("SevenUp").description("niceFilmUp").releaseDate(LocalDate.of(2000,
+                        9, 22))
                 .duration(85)
                 .id(8)
                 .build();
@@ -288,7 +297,8 @@ class FilmControllerTest {
     @Test
     public void putFilms_whenNameIsEmpty() throws Exception {
         addFilmsForUpdate();
-        Film film1Update = Film.builder().description("niceFilmUp").releaseDate(LocalDate.of(2000, 9, 22))
+        Film film1Update = Film.builder().description("niceFilmUp").releaseDate(LocalDate.of(2000, 9,
+                        22))
                 .duration(85)
                 .id(1)
                 .build();
@@ -308,8 +318,9 @@ class FilmControllerTest {
     @Test
     public void putFilms_whenDescriptionsLengthIs201() throws Exception {
         addFilmsForUpdate();
-        Film film1Update = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлпппппппппппппппппп" +
-                        "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп").
+        Film film1Update = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлппппппп" +
+                        "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп" +
+                        "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп").
                 releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
                 .id(1)
@@ -351,7 +362,8 @@ class FilmControllerTest {
     @Test
     public void putFilms_whenDurationIsNegative() throws Exception {
         addFilmsForUpdate();
-        Film film1Update = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995, 9, 22))
+        Film film1Update = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995,
+                        9, 22))
                 .duration(-1)
                 .id(1)
                 .build();
@@ -370,7 +382,8 @@ class FilmControllerTest {
 
     @Test
     public void putFilms_whenFilmsAreEmpty() throws Exception {
-        Film film1Update = Film.builder().name("SevenUp").description("niceFilmUp").releaseDate(LocalDate.of(2000, 9, 22))
+        Film film1Update = Film.builder().name("SevenUp").description("niceFilmUp").releaseDate(LocalDate.of(2000,
+                        9, 22))
                 .duration(85)
                 .id(1)
                 .build();
