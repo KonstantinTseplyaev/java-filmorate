@@ -40,7 +40,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void postUsers_whenUserAttributesAreNotEmptyAndCorrect() throws Exception {
+    public void createUserWithCorrectDataTest() throws Exception {
         mockMvc.perform(
                         post("/users")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -50,7 +50,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void postUsers_whenUserHasOnlyEmailAndLogin() throws Exception {
+    public void createUserWithOnlyEmailAndLoginTest() throws Exception {
         User newUser = User.builder().email("myEm.2020@mail.ru").login("realGangsta").id(1).build();
         User newUser2 = User.builder().email("myEm.2020@mail.ru").login("realGangsta").id(1).name("realGangsta").build();
         mockMvc.perform(
@@ -62,7 +62,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void postUsers_whenEmailIsEmpty() throws Exception {
+    public void createUserWithEmailIsEmptyTest() throws Exception {
         User user1 = User.builder().login("myLog")
                 .name("Konstantin").birthday(LocalDate.of(2000, 5, 10))
                 .id(1).build();
@@ -74,7 +74,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void postUsers_whenLoginIsEmpty() throws Exception {
+    public void createUserWithLoginIsEmptyTest() throws Exception {
         User user1 = User.builder().email("myEm.2020@mail.ru")
                 .name("Konstantin").birthday(LocalDate.of(2000, 5, 10))
                 .id(1).build();
@@ -86,7 +86,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void postUsers_whenUserHasIncorrectEmail() throws Exception {
+    public void createUserWithIncorrectEmail() throws Exception {
         User user1 = User.builder().email("myfirstemailgmail.ru").login("myLog")
                 .name("Konstantin").birthday(LocalDate.of(2000, 5, 10))
                 .id(1).build();
@@ -98,7 +98,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void postUsers_whenUserHasIncorrectLogin() throws Exception {
+    public void createUserWithIncorrectLoginTest() throws Exception {
         User user1 = User.builder().email("myEm.2020@mail.ru").login("my Log")
                 .name("Konstantin").birthday(LocalDate.of(2000, 5, 10))
                 .id(1).build();
@@ -111,7 +111,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void postUsers_whenUserHasIncorrectBirthday() throws Exception {
+    public void createUserWithIncorrectBirthdayTest() throws Exception {
         User user1 = User.builder().email("myEm.2020@mail.ru").login("myLog")
                 .name("Konstantin").birthday(LocalDate.now().plusDays(1))
                 .id(1).build();
@@ -123,7 +123,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void postUsers_whenUsersBirthdayIsNowMinusOneDay() throws Exception {
+    public void createUserWithBirthdayIsNowMinusOneDayTest() throws Exception {
         User user1 = User.builder().email("myEm.2020@mail.ru").login("myLog")
                 .name("Konstantin").birthday(LocalDate.now().minusDays(1))
                 .id(1).build();
@@ -135,7 +135,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void postUsers_whenUsersBirthdayIsNow() throws Exception {
+    public void createUserWithUsersBirthdayIsNowTest() throws Exception {
         User user1 = User.builder().email("myEm.2020@mail.ru").login("myLog")
                 .name("Konstantin").birthday(LocalDate.now())
                 .id(1).build();
@@ -147,7 +147,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void getUsers_whenUsersAreEmpty() throws Exception {
+    public void getUsers_whenUsersAreEmptyTest() throws Exception {
         mockMvc.perform(
                         get("/users")
                                 .contentType(MediaType.APPLICATION_JSON))
@@ -156,7 +156,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void getUsers_whenWereAddedValidUsers() throws Exception {
+    public void getUsers_whenUsersAreValidTest() throws Exception {
         User user3 = User.builder().email("my3rdmail@gmail.ru").login("myLogin3")
                 .name("Maksim").birthday(LocalDate.of(1995, 12, 8))
                 .id(3).build();
@@ -181,7 +181,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void getUsers_whenWereAddedNotValidUsers() throws Exception {
+    public void getUsers_whenUsersAreNotValidTest() throws Exception {
         User user1 = User.builder().email("myEm.2020@mail.ru").login("myLog")
                 .name("Konstantin").birthday(LocalDate.now().plusDays(1))
                 .id(1).build();
@@ -218,7 +218,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void putUsers_whenUserAttributesAreNotEmptyAndCorrect() throws Exception {
+    public void putUserWithCorrectDataTest() throws Exception {
         addUsersForUpdate();
         User userUpdate = User.builder().email("my3rdmail@gmail.ru").login("myLoginUP")
                 .name("Maksim").birthday(LocalDate.of(1995, 12, 8))
@@ -238,7 +238,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void putUsers_whenUserAttributesAreNotValid() throws Exception {
+    public void putUserWithNotValidDataTest() throws Exception {
         addUsersForUpdate();
         User user1Up = User.builder().email("myEm.2020@mail.ru").login("myLog")
                 .name("Konstantin").birthday(LocalDate.now().plusDays(1))
@@ -281,7 +281,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void putUsers_whenUserHasIncorrectId() throws Exception {
+    public void putUsers_whenUserHasIncorrectIdTest() throws Exception {
         addUsersForUpdate();
         User userUp = User.builder().email("myfirstemail@gmail.ru").login("myLog")
                 .name("Konstantin").birthday(LocalDate.of(2000, 5, 10))
@@ -294,7 +294,7 @@ class UserControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(userUp)));
     }
 
-    public void addUsersForUpdate() throws Exception {
+    private void addUsersForUpdate() throws Exception {
         mockMvc.perform(
                 post("/users")
                         .content(objectMapper.writeValueAsString(user1))

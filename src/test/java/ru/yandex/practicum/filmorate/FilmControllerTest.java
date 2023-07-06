@@ -43,7 +43,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void postFilms_whenFilmAttributesAreNotEmptyAndCorrect() throws Exception {
+    public void createFilmWithCorrectDataTest() throws Exception {
         mockMvc.perform(
                         post("/films")
                                 .content(objectMapper.writeValueAsString(film1))
@@ -53,7 +53,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void postFilms_whenFilmHasOnlyName() throws Exception {
+    public void createFilmWithNameOnlyTest() throws Exception {
         Film film = Film.builder().name("Melancholy").id(1).build();
         mockMvc.perform(
                         post("/films")
@@ -64,7 +64,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void postFilms_whenNameIsEmpty() throws Exception {
+    public void createFilmWithNameIsEmptyTest() throws Exception {
         Film film = Film.builder().description("niceFilm").releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
                 .id(1)
@@ -77,10 +77,8 @@ class FilmControllerTest {
     }
 
     @Test
-    public void postFilms_whenDescriptionsLengthIs201() throws Exception {
-        Film film = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлпппппппппппппппп" +
-                        "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп" +
-                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппп")
+    public void createFilmWithDescriptionsLengthIs201Test() throws Exception {
+        Film film = Film.builder().name("Seven").description("x".repeat(201))
                 .releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
                 .id(1)
@@ -93,10 +91,8 @@ class FilmControllerTest {
     }
 
     @Test
-    public void postFilms_whenDescriptionsLengthIs200() throws Exception {
-        Film film = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлпппппппппппппппп" +
-                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп" +
-                        "пппппппппппппппппппппппппппппппппппппппппппппппппппппппп")
+    public void createFilmWithDescriptionsLengthIs200Test() throws Exception {
+        Film film = Film.builder().name("Seven").description("x".repeat(200))
                 .releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
                 .id(1)
@@ -109,7 +105,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void postFilms_whenReleaseDateIs27December1895() throws Exception {
+    public void createFilmWithReleaseDateIs27December1895Test() throws Exception {
         Film film = Film.builder().name("Seven").description("niceFilm")
                 .releaseDate(LocalDate.of(1895, 12, 27))
                 .duration(80)
@@ -124,7 +120,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void postFilms_whenReleaseDateIs28December1895() throws Exception {
+    public void createFilmWithReleaseDateIs28December1895Test() throws Exception {
         Film film = Film.builder().name("Seven").description("niceFilm")
                 .releaseDate(LocalDate.of(1895, 12, 28))
                 .duration(80)
@@ -138,7 +134,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void postFilms_whenDurationIsZero() throws Exception {
+    public void createFilmWithDurationIsZeroTest() throws Exception {
         Film film = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995,
                         9, 22))
                 .duration(0)
@@ -152,7 +148,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void postFilms_whenDurationIsNegative() throws Exception {
+    public void createFilmWithDurationIsNegativeTest() throws Exception {
         Film film = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995,
                         9, 22))
                 .duration(-1)
@@ -166,7 +162,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void getFilms_whenFilmsAreEmpty() throws Exception {
+    public void getFilms_whenFilmsAreEmptyTest() throws Exception {
         mockMvc.perform(
                         get("/films")
                                 .contentType(MediaType.APPLICATION_JSON))
@@ -175,7 +171,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void getFilms_whenWereAddedValidFilms() throws Exception {
+    public void getFilms_whenFilmsAreValidTest() throws Exception {
         Film film3 = Film.builder().name("Enter the Void").description("niceFilm").releaseDate(LocalDate.of(2019,
                         7, 7))
                 .duration(100)
@@ -202,7 +198,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void getFilms_whenWereAddedNotValidFilms() throws Exception {
+    public void getFilms_whenFilmsAreNotValidTest() throws Exception {
         Film film1 = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995, 9,
                         22))
                 .duration(-80)
@@ -237,7 +233,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void putFilms_whenFilmAttributesAreNotEmptyAndCorrect() throws Exception {
+    public void putFilm_withCorrectDataTest() throws Exception {
         addFilmsForUpdate();
         Film film1Update = Film.builder().name("SevenUp").description("niceFilmUp").releaseDate(LocalDate.of(2000,
                         9, 22))
@@ -259,7 +255,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void putFilms_whenFilmHasIncorrectId() throws Exception {
+    public void putFilm_withIncorrectIdTest() throws Exception {
         addFilmsForUpdate();
         Film film1Update = Film.builder().name("SevenUp").description("niceFilmUp").releaseDate(LocalDate.of(2000,
                         9, 22))
@@ -275,7 +271,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void putFilms_whenFilmHasOnlyName() throws Exception {
+    public void putFilm_withNameOnlyTest() throws Exception {
         addFilmsForUpdate();
         Film film1Update = Film.builder().name("SevenUp")
                 .id(1)
@@ -295,7 +291,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void putFilms_whenNameIsEmpty() throws Exception {
+    public void putFilm_withNameIsEmptyTest() throws Exception {
         addFilmsForUpdate();
         Film film1Update = Film.builder().description("niceFilmUp").releaseDate(LocalDate.of(2000, 9,
                         22))
@@ -316,11 +312,9 @@ class FilmControllerTest {
     }
 
     @Test
-    public void putFilms_whenDescriptionsLengthIs201() throws Exception {
+    public void putFilm_withDescriptionsLengthIs201Test() throws Exception {
         addFilmsForUpdate();
-        Film film1Update = Film.builder().name("Seven").description("niceFilmаывацуцтщацущаощкуьмзцдулкузщлппппппп" +
-                        "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп" +
-                        "ппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппппп")
+        Film film1Update = Film.builder().name("Seven").description("x".repeat(201))
                 .releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
                 .id(1)
@@ -339,7 +333,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void putFilms_whenReleaseDateIs27December1895() throws Exception {
+    public void putFilm_withReleaseDateIs27December1895Test() throws Exception {
         addFilmsForUpdate();
         Film film1Update = Film.builder().name("Seven").description("niceFilm")
                 .releaseDate(LocalDate.of(1895, 12, 27))
@@ -360,7 +354,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void putFilms_whenDurationIsNegative() throws Exception {
+    public void putFilm_withDurationIsNegativeTest() throws Exception {
         addFilmsForUpdate();
         Film film1Update = Film.builder().name("Seven").description("niceFilm").releaseDate(LocalDate.of(1995,
                         9, 22))
@@ -381,7 +375,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void putFilms_whenFilmsAreEmpty() throws Exception {
+    public void putFilm_whenFilmsAreEmptyTest() throws Exception {
         Film film1Update = Film.builder().name("SevenUp").description("niceFilmUp").releaseDate(LocalDate.of(2000,
                         9, 22))
                 .duration(85)
@@ -395,7 +389,7 @@ class FilmControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(film1Update)));
     }
 
-    public void addFilmsForUpdate() throws Exception {
+    private void addFilmsForUpdate() throws Exception {
         mockMvc.perform(
                 post("/films")
                         .content(objectMapper.writeValueAsString(film1))

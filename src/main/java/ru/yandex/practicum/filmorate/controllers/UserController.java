@@ -32,7 +32,7 @@ public class UserController {
                 user.setName(user.getLogin());
             }
             if (user.getLogin().contains(" ")) {
-                log.warn("логин не должен содержать пробелы: {}", user.getLogin());
+                log.error("логин не должен содержать пробелы: {}", user.getLogin());
                 throw new ValidationException("логин не должен содержать пробелы");
             }
             user.setId(currentId++);
@@ -52,7 +52,7 @@ public class UserController {
     public ResponseEntity<?> updateUser(@Valid @RequestBody User user) {
         try {
             if (user.getLogin().contains(" ")) {
-                log.warn("логин не должен содержать пробелы: {}", user.getLogin());
+                log.error("логин не должен содержать пробелы: {}", user.getLogin());
                 throw new ValidationException("логин не должен содержать пробелы");
             }
             if (users.containsKey(user.getId())) {
@@ -62,7 +62,7 @@ public class UserController {
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(user);
             } else {
-                log.warn("пользователя с таким id не существует: {}", user.getId());
+                log.error("пользователя с таким id не существует: {}", user.getId());
                 throw new ValidationException("пользователя с таким id не существует");
             }
         } catch (ValidationException exp) {

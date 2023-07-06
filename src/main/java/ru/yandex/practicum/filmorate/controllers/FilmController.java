@@ -32,7 +32,7 @@ public class FilmController {
         try {
             if (film.getReleaseDate() != null &&
                     film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-                log.warn("недопустимая дата релиза: {}", film.getReleaseDate());
+                log.error("недопустимая дата релиза: {}", film.getReleaseDate());
                 throw new ValidationException("недопустимая дата релиза");
             }
             film.setId(currentId++);
@@ -53,7 +53,7 @@ public class FilmController {
         try {
             if (film.getReleaseDate() != null &&
                     film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-                log.warn("недопустимая дата релиза: {}", film.getReleaseDate());
+                log.error("недопустимая дата релиза: {}", film.getReleaseDate());
                 throw new ValidationException("недопустимая дата релиза");
             }
             if (films.containsKey(film.getId())) {
@@ -63,7 +63,7 @@ public class FilmController {
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(film);
             } else {
-                log.warn("фильма с таким id не суещствует: {}", film.getId());
+                log.error("фильма с таким id не суещствует: {}", film.getId());
                 throw new ValidationException("фильма с таким id не суещствует");
             }
         } catch (ValidationException exp) {
