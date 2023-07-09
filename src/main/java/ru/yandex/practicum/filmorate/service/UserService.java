@@ -46,6 +46,7 @@ public class UserService {
     public void deleteAllUsers() {
         userStorage.deleteAllUsers();
     }
+
     public void addFriend(long id, long friendId) {
         if (id == friendId) {
             throw new IncorrectIdException("нужно указать id другого пользователя");
