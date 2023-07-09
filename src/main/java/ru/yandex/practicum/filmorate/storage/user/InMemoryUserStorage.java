@@ -6,10 +6,8 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -58,30 +56,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void deleteAllUsers() {
         users.clear();
-    }
-
-    @Override
-    public List<User> getFriendsList(long id) {
-        if (!users.containsKey(id)) {
-            throw new IncorrectIdException("Пользователя с таким id не существует: " + id);
-        }
-        User user = users.get(id);
-        if (user.getFriends().isEmpty()) {
-            throw new IncorrectIdException("у этого пользователя нет друзей");
-        }
-        return user.getFriends().stream()
-                .map(users::get).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<User> getCommonFriends(long id, long otherId) {
-        if (!users.containsKey(id) || !users.containsKey(otherId)) {
-            throw new IncorrectIdException("Пользователя с таким id не существует");
-        }
-        Set<Long> otherUsersFriends = users.get(otherId).getFriends();
-        return users.get(id).getFriends().stream()
-                .filter(otherUsersFriends::contains)
-                .map(users::get).collect(Collectors.toList());
     }
 }
 
