@@ -11,10 +11,12 @@ import java.util.Set;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
+    private long currentId = 0;
     private final Map<Long, Film> films = new HashMap<>();
 
     @Override
     public Film creteFilm(Film film) {
+        film.setId(++currentId);
         films.put(film.getId(), film);
         return film;
     }

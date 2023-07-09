@@ -13,10 +13,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
+    private long currentId = 0;
     private final Map<Long, User> users = new HashMap<>();
 
     @Override
     public User createUser(User user) {
+        user.setId(++currentId);
         users.put(user.getId(), user);
         return user;
     }
@@ -82,3 +84,4 @@ public class InMemoryUserStorage implements UserStorage {
                 .map(users::get).collect(Collectors.toList());
     }
 }
+

@@ -14,13 +14,13 @@ import java.util.Set;
 @Builder
 public class Film {
     private long id;
-    @NotEmpty
+    @NotEmpty(message = "название не может быть пустым")
     private String name;
-    @Size(max = 200)
+    @Size(max = 200, message = "длина описания не более 200 символов")
     private String description;
-    @Past
+    @Past(message = "дата релиза не может быть в будущем")
     private LocalDate releaseDate;
-    @PositiveOrZero
+    @PositiveOrZero(message = "длительность должна быть положительной")
     private int duration;
     private Set<Long> likes;
 }

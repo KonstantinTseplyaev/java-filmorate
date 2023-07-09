@@ -14,13 +14,13 @@ import java.util.Set;
 @Builder
 public class User {
     private long id;
-    @NotEmpty
-    @Email
+    @NotEmpty(message = "email не может быть пустым")
+    @Email(message = "не соответствует формату Email")
     private String email;
-    @NotBlank
+    @NotBlank(message = "логин не может быть пустым")
     private String login;
     private String name;
-    @Past
+    @Past(message = "дата рождения не может быть в будущем")
     private LocalDate birthday;
     private Set<Long> friends;
 }

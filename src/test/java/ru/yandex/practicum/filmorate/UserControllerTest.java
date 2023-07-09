@@ -1,4 +1,4 @@
-/*package ru.yandex.practicum.filmorate;
+package ru.yandex.practicum.filmorate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -305,4 +305,4 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(user2))
                         .contentType(MediaType.APPLICATION_JSON));
     }
-}*/
+}

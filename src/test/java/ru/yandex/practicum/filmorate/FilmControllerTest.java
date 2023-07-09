@@ -1,4 +1,4 @@
-/*package ru.yandex.practicum.filmorate;
+package ru.yandex.practicum.filmorate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +26,7 @@ class FilmControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+
     private Film film1 = Film.builder().name("Seven").description("niceFilm")
             .releaseDate(LocalDate.of(1995, 9, 22))
             .duration(80)
@@ -399,5 +400,5 @@ class FilmControllerTest {
                         .content(objectMapper.writeValueAsString(film2))
                         .contentType(MediaType.APPLICATION_JSON));
     }
-}*/
+}
 
