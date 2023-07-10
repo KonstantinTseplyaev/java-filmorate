@@ -34,20 +34,14 @@ public class FilmService implements FilmServiceInt {
 
     @Override
     public Film createFilm(Film film) {
-        if (film.getReleaseDate() != null &&
-                film.getReleaseDate().isBefore(LOWER_DATE_LIMIT)) {
-            throw new ValidationException("недопустимая дата релиза: " + film.getReleaseDate());
-        }
+        checkReleaseDate(film);
         film.setLikes(new HashSet<>());
         return filmStorage.create(film);
     }
 
     @Override
     public Film updateFilm(Film film) {
-        if (film.getReleaseDate() != null &&
-                film.getReleaseDate().isBefore(LOWER_DATE_LIMIT)) {
-            throw new ValidationException("недопустимая дата релиза: " + film.getReleaseDate());
-        }
+        checkReleaseDate(film);
         Set<Long> likes = filmStorage.getById(film.getId()).getLikes();
         film.setLikes(likes);
         return filmStorage.update(film);
@@ -97,5 +91,12 @@ public class FilmService implements FilmServiceInt {
         return filmStorage.getAll().stream()
                 .sorted(TOP_FILMS_COMPARATOR)
                 .limit(count).collect(Collectors.toList());
+    }
+
+    private void checkReleaseDate(Film film) {
+        if (film.getReleaseDate() != null &&
+                film.getReleaseDate().isBefore(LOWER_DATE_LIMIT)) {
+            throw new ValidationException("недопустимая дата релиза: " + film.getReleaseDate());
+        }
     }
 }

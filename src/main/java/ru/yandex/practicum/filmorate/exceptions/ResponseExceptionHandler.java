@@ -34,10 +34,17 @@ public class ResponseExceptionHandler extends DefaultHandlerExceptionResolver {
                         exp.getMessage())));
     }
 
+    @ExceptionHandler(value = Throwable.class)
+    public ResponseEntity<Map<String, String>> handleThrowableCount(final Throwable thr) {
+        log.error(thr.getMessage());
+        return ResponseEntity.status(500)
+                .body(Map.of("error", "Ошибка в работе сервера", "errorMessage", thr.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ValidationErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException exp) {
+    public ValidationErrorResponse handleMethodArgumentNotValidExpCount(MethodArgumentNotValidException exp) {
         final List<Violation> violations = exp.getBindingResult().getFieldErrors().stream()
                 .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.toList());

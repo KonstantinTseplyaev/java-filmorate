@@ -25,24 +25,14 @@ public class UserService implements UserServiceInt {
 
     @Override
     public User createUser(User user) {
-        if (user.getLogin().contains(" ")) {
-            throw new ValidationException("логин не должен содержать пробелы: " + user.getLogin());
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        checkUsersNameAndLogin(user);
         user.setFriends(new HashSet<>());
         return userStorage.create(user);
     }
 
     @Override
     public User updateUser(User user) {
-        if (user.getLogin().contains(" ")) {
-            throw new ValidationException("логин не должен содержать пробелы: " + user.getLogin());
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        checkUsersNameAndLogin(user);
         Set<Long> friends = userStorage.getById(user.getId()).getFriends();
         user.setFriends(friends);
         return userStorage.update(user);
@@ -70,9 +60,7 @@ public class UserService implements UserServiceInt {
 
     @Override
     public void addFriend(long id, long friendId) {
-        if (id == friendId) {
-            throw new IncorrectIdException("нужно указать id другого пользователя");
-        }
+        checkFriendsId(id, friendId);
         User friend1 = userStorage.getById(id);
         User friend2 = userStorage.getById(friendId);
         friend1.getFriends().add(friendId);
@@ -81,9 +69,7 @@ public class UserService implements UserServiceInt {
 
     @Override
     public void deleteFriend(long id, long friendId) {
-        if (id == friendId) {
-            throw new IncorrectIdException("нужно указать id другого пользователя");
-        }
+        checkFriendsId(id, friendId);
         User friend1 = userStorage.getById(id);
         User friend2 = userStorage.getById(friendId);
         if (!friend1.getFriends().contains(friendId)) {
@@ -111,5 +97,20 @@ public class UserService implements UserServiceInt {
         return user1.getFriends().stream()
                 .filter(otherUsersFriends::contains)
                 .map(userStorage::getById).collect(Collectors.toList());
+    }
+
+    private void checkUsersNameAndLogin(User user) {
+        if (user.getLogin().contains(" ")) {
+            throw new ValidationException("логин не должен содержать пробелы: " + user.getLogin());
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+    }
+
+    private void checkFriendsId(long id, long friendId) {
+        if (id == friendId) {
+            throw new IncorrectIdException("нужно указать id другого пользователя");
+        }
     }
 }
