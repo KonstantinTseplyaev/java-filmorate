@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -12,8 +13,8 @@ import java.util.Set;
 
 @Data
 @Builder
-public class Film {
-    private long id;
+@EqualsAndHashCode(callSuper = false)
+public class Film extends AbstractModel {
     @NotEmpty(message = "название не может быть пустым")
     private String name;
     @Size(max = 200, message = "длина описания не более 200 символов")

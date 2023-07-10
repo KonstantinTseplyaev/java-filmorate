@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectIdException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -23,8 +23,8 @@ public class FilmService implements FilmServiceInt {
     private static final LocalDate LOWER_DATE_LIMIT = LocalDate.of(1895, 12, 28);
     private static final Comparator<Film> TOP_FILMS_COMPARATOR = (f0, f1) -> -1 * Integer.compare(f0.getLikes().size(),
             f1.getLikes().size());
-    private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final Storage<Film> filmStorage;
+    private final Storage<User> userStorage;
 
     @Autowired
     public FilmService(InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage) {
@@ -39,7 +39,7 @@ public class FilmService implements FilmServiceInt {
             throw new ValidationException("недопустимая дата релиза: " + film.getReleaseDate());
         }
         film.setLikes(new HashSet<>());
-        return filmStorage.creteFilm(film);
+        return filmStorage.create(film);
     }
 
     @Override
@@ -48,43 +48,43 @@ public class FilmService implements FilmServiceInt {
                 film.getReleaseDate().isBefore(LOWER_DATE_LIMIT)) {
             throw new ValidationException("недопустимая дата релиза: " + film.getReleaseDate());
         }
-        Set<Long> likes = filmStorage.getFilmById(film.getId()).getLikes();
+        Set<Long> likes = filmStorage.getById(film.getId()).getLikes();
         film.setLikes(likes);
-        return filmStorage.updateFilm(film);
+        return filmStorage.update(film);
     }
 
     @Override
     public Collection<Film> getAllFilms() {
-        return filmStorage.findFilms();
+        return filmStorage.getAll();
     }
 
     @Override
     public void deleteFilmById(long id) {
-        filmStorage.deleteFilmById(id);
+        filmStorage.deleteById(id);
     }
 
     @Override
     public void deleteAllFilms() {
-        filmStorage.deleteAllFilms();
+        filmStorage.deleteAll();
     }
 
     @Override
     public Film getFilmById(long id) {
-        return filmStorage.getFilmById(id);
+        return filmStorage.getById(id);
     }
 
     @Override
     public int addLikeToFilm(long filmId, long userId) {
-        userStorage.getUserById(userId);
-        Film thisFilm = filmStorage.getFilmById(filmId);
+        userStorage.getById(userId);
+        Film thisFilm = filmStorage.getById(filmId);
         thisFilm.getLikes().add(userId);
         return thisFilm.getLikes().size();
     }
 
     @Override
     public int deleteLike(long filmId, long userId) {
-        userStorage.getUserById(userId);
-        Film thisFilm = filmStorage.getFilmById(filmId);
+        userStorage.getById(userId);
+        Film thisFilm = filmStorage.getById(filmId);
         if (!thisFilm.getLikes().contains(userId)) {
             throw new IncorrectIdException("пользователь не ставил лайк этому фильму");
         }
@@ -94,7 +94,7 @@ public class FilmService implements FilmServiceInt {
 
     @Override
     public List<Film> getTopFilms(int count) {
-        return filmStorage.findFilms().stream()
+        return filmStorage.getAll().stream()
                 .sorted(TOP_FILMS_COMPARATOR)
                 .limit(count).collect(Collectors.toList());
     }
