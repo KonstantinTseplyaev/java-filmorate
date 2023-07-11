@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
+import ru.yandex.practicum.filmorate.service.film.FilmServiceInt;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -24,7 +25,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmService filmService;
+    private final FilmServiceInt filmService;
 
     @Autowired
     public FilmController(FilmService filmService) {

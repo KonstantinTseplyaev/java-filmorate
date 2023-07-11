@@ -34,13 +34,6 @@ public class ResponseExceptionHandler extends DefaultHandlerExceptionResolver {
                         exp.getMessage())));
     }
 
-    @ExceptionHandler(value = Throwable.class)
-    public ResponseEntity<Map<String, String>> handleThrowableCount(final Throwable thr) {
-        log.error(thr.getMessage());
-        return ResponseEntity.status(500)
-                .body(Map.of("error", "Ошибка в работе сервера", "errorMessage", thr.getMessage()));
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
@@ -63,5 +56,12 @@ public class ResponseExceptionHandler extends DefaultHandlerExceptionResolver {
     public static class Violation {
         private final String fieldName;
         private final String message;
+    }
+
+   @ExceptionHandler(value = Throwable.class)
+    public ResponseEntity<Map<String, String>> handleThrowableCount(final Throwable thr) {
+        log.error(thr.getMessage());
+        return ResponseEntity.status(500)
+                .body(Map.of("error", "Ошибка в работе сервера", "errorMessage", thr.getMessage()));
     }
 }

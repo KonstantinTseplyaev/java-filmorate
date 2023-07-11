@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
+import ru.yandex.practicum.filmorate.service.user.UserServiceInt;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -23,7 +24,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserServiceInt userService;
 
     @Autowired
     public UserController(UserService userService) {
