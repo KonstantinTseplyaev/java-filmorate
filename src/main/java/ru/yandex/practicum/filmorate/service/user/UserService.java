@@ -3,14 +3,17 @@ package ru.yandex.practicum.filmorate.service.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectIdException;
+import ru.yandex.practicum.filmorate.exceptions.RejectedFriendRequestException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.FriendStatus;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -63,8 +66,16 @@ public class UserService implements UserServiceInt {
         checkFriendsId(id, friendId);
         User friend1 = userStorage.getById(id);
         User friend2 = userStorage.getById(friendId);
-        friend1.getFriends().add(friendId);
-        friend2.getFriends().add(id);
+        friend2.getFriendsStatuses().put(id, FriendStatus.UNCONFIRMED);
+        int status = new Random().nextInt(2); //псевдореакция пользователя на входящий запрос на добавление в друзья
+        if (status == 0) {
+            friend2.getFriendsStatuses().put(id, FriendStatus.REJECTED);
+            throw new RejectedFriendRequestException("Пользователь " + friendId + " отклонил запрос на добавление в друзья пользователя " + id);
+        } else {
+            friend2.getFriendsStatuses().put(id, FriendStatus.CONFIRMED);
+            friend1.getFriends().add(friendId);
+            friend2.getFriends().add(id);
+        }
     }
 
     @Override
