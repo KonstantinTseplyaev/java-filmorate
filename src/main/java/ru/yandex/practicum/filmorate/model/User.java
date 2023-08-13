@@ -11,7 +11,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Set;
 
 @Data
 @Builder
@@ -26,5 +25,4 @@ public class User extends AbstractModel {
     @Past(message = "дата рождения не может быть в будущем")
     private LocalDate birthday;
     private Map<Long, FriendStatus> friendsStatuses;
-    private Set<Long> friends;
 }

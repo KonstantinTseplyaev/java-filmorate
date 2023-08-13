@@ -46,10 +46,9 @@ public class FilmController {
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
         log.info("запрос на обновление фильма: {}", film);
         Film updateFilm = filmService.updateFilm(film);
-        log.info("обновлен фильм под id {}: {}", film.getId(), updateFilm);
+        log.info("обновлен фильм {}", updateFilm.getId());
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(updateFilm);
+                .contentType(MediaType.APPLICATION_JSON).body(updateFilm);
     }
 
     @GetMapping
@@ -89,17 +88,17 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public ResponseEntity<String> addLikeToFilm(@PathVariable long id, @PathVariable long userId) {
         log.info("запрос от пользователя с id {} поставить лайк фильму с id {}", userId, id);
-        int likes = filmService.addLikeToFilm(id, userId);
-        log.info("Лайк добавлен. Кол-во лайков у фильма под id " + id + ": " + likes);
-        return ResponseEntity.ok().body("Лайк добавлен. Кол-во лайков у фильма под id " + id + ": " + likes);
+        filmService.addLikeToFilm(id, userId);
+        log.info("Лайк добавлен");
+        return ResponseEntity.ok().body("Лайк добавлен");
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public ResponseEntity<String> deleteLike(@PathVariable long id, @PathVariable long userId) {
         log.info("запрос от пользователя с id {} удалить лайк с фильма под id {}", userId, id);
-        int likes = filmService.deleteLike(id, userId);
-        log.info("Лайк удален. Кол-во лайков у фильма под id " + id + ": " + likes);
-        return ResponseEntity.ok().body("Лайк удален. Кол-во лайков у фильма под id " + id + ": " + likes);
+        filmService.deleteLike(id, userId);
+        log.info("Лайк удален.");
+        return ResponseEntity.ok().body("Лайк удален.");
     }
 
     @GetMapping("/popular")

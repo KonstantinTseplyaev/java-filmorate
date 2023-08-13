@@ -19,9 +19,9 @@ public interface FilmServiceInt {
 
     Film getFilmById(long id);
 
-    int addLikeToFilm(long filmId, long userId);
+    void addLikeToFilm(long filmId, long userId);
 
-    int deleteLike(long filmId, long userId);
+    void deleteLike(long filmId, long userId);
 
     List<Film> getTopFilms(int count);
 }

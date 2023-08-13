@@ -1,9 +1,9 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.old_storage;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-@Component
+@Component("inMemoryUserStorage")
 public class InMemoryUserStorage extends Storage<User> {
 
 }

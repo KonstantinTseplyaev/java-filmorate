@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ru.yandex.practicum.filmorate.model.enums.Genres;
-import ru.yandex.practicum.filmorate.model.enums.Mpa;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PositiveOrZero;
@@ -23,8 +23,9 @@ public class Film extends AbstractModel {
     @Past(message = "дата релиза не может быть в будущем")
     private LocalDate releaseDate;
     @PositiveOrZero(message = "длительность должна быть положительной")
-    private int duration;
-    private Set<Genres> genres;
-    private final Mpa mpa;
+    private Integer duration;
+    private Set<Genre> genres;
+    @NotNull
+    private Rating mpa;
     private Set<Long> likes;
 }
