@@ -3,13 +3,14 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import ru.yandex.practicum.filmorate.model.enums.FriendStatus;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.Map;
 
 @Data
 @Builder
@@ -23,5 +24,5 @@ public class User extends AbstractModel {
     private String name;
     @Past(message = "дата рождения не может быть в будущем")
     private LocalDate birthday;
-    private Set<Long> friends;
+    private Map<Long, FriendStatus> friendsStatuses;
 }

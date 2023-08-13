@@ -37,18 +37,16 @@ public class UserController {
         User newUser = userService.createUser(user);
         log.info("добавлен пользователь: {}", newUser);
         return ResponseEntity.status(201)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(newUser);
+                .contentType(MediaType.APPLICATION_JSON).body(newUser);
     }
 
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
         log.info("запрос на обновление пользователя: {}", user);
         User updateUser = userService.updateUser(user);
-        log.info("обновлен пользователь под id {}: {}", user.getId(), updateUser);
+        log.info("обновлен пользователь под id {}", user.getId());
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(updateUser);
+                .contentType(MediaType.APPLICATION_JSON).body(updateUser);
     }
 
     @GetMapping
