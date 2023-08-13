@@ -34,13 +34,6 @@ public class ResponseExceptionHandler extends DefaultHandlerExceptionResolver {
                         exp.getMessage())));
     }
 
-    @ExceptionHandler(value = RejectedFriendRequestException.class)
-    public ResponseEntity<String> handleRejectedFriendRequestExpCount(final RejectedFriendRequestException exp) {
-        log.error(exp.getMessage());
-        return ResponseEntity.status(200)
-                .body(exp.getMessage());
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
@@ -65,7 +58,7 @@ public class ResponseExceptionHandler extends DefaultHandlerExceptionResolver {
         private final String message;
     }
 
-    @ExceptionHandler(value = Throwable.class)
+   @ExceptionHandler(value = Throwable.class)
     public ResponseEntity<Map<String, String>> handleThrowableCount(final Throwable thr) {
         log.error(thr.getMessage());
         return ResponseEntity.status(500)

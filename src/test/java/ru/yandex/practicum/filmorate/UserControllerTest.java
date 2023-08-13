@@ -5,7 +5,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -20,13 +19,12 @@ import ru.yandex.practicum.filmorate.service.user.UserServiceInt;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureTestDatabase
 class UserControllerTest {
     @Autowired
     private UserController controller;
@@ -67,10 +65,10 @@ class UserControllerTest {
     @Test
     public void createUser_whenOnlyEmailAndLoginTest() throws Exception {
         User newUser = User.builder().email("myEm.2020@mail.ru").login("realGangsta").build();
-        User ourUser = service.createUser(newUser);
-        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/users/" + ourUser.getId()));
+        service.createUser(newUser);
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/users/" + newUser.getId()));
         response.andExpect(MockMvcResultMatchers.status().isOk());
-        response.andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(ourUser)));
+        response.andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(newUser)));
     }
 
     @Test
@@ -148,6 +146,7 @@ class UserControllerTest {
                 .name("Konstantin").birthday(LocalDate.now().minusDays(1))
                 .build();
         service.createUser(newUser);
+        newUser.setFriends(new HashSet<>());
         ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/users/" + newUser.getId()));
         response.andExpect(MockMvcResultMatchers.status().is(200));
         response.andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(newUser)));
@@ -194,9 +193,9 @@ class UserControllerTest {
         addUsersForUpdate();
         User userUpdate = User.builder().email("my3rdmail@gmail.ru").login("myLoginUP")
                 .name("Maksim").birthday(LocalDate.of(1995, 12, 8))
-                .friendsStatuses(new HashMap<>())
                 .build();
         userUpdate.setId(user1.getId());
+        userUpdate.setFriends(new HashSet<>());
         Collection<User> usersList = List.of(userUpdate, user2);
         ResultActions putResponse = mockMvc.perform(MockMvcRequestBuilders.put("/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -272,7 +271,7 @@ class UserControllerTest {
                 .content(objectMapper.writeValueAsString(userUp)));
         response.andExpect(MockMvcResultMatchers.status().is(404));
         response.andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(Map.of("error",
-                "Ошибка при указании id фильма/пользователя", "errorMessage", "пользователя с id " + userUp.getId() + " не существует!"))));
+                "Ошибка при указании id фильма/пользователя", "errorMessage", "Такого id нет: " + userUp.getId()))));
     }
 
     private void addUsersForUpdate() throws Exception {
