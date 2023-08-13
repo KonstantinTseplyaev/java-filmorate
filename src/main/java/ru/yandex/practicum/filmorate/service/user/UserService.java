@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.enums.FriendStatus;
 import ru.yandex.practicum.filmorate.storage.dao.UserDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.impl.UserDbStorageImpl;
+import ru.yandex.practicum.filmorate.storage.dao.UserDbStorageImpl;
 
 import java.util.Collection;
 import java.util.HashMap;

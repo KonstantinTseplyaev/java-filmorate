@@ -8,8 +8,8 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.UserDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.impl.FilmDbStorageImpl;
-import ru.yandex.practicum.filmorate.storage.dao.impl.UserDbStorageImpl;
+import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorageImpl;
+import ru.yandex.practicum.filmorate.storage.dao.UserDbStorageImpl;
 
 import java.time.LocalDate;
 import java.util.Collection;

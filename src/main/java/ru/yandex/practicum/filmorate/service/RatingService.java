@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.impl.FilmDbStorageImpl;
+import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorageImpl;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.dao.impl;
+package ru.yandex.practicum.filmorate.storage.dao;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;

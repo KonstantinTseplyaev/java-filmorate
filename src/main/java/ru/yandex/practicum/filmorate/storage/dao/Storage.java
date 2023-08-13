@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.old_storage;
+package ru.yandex.practicum.filmorate.storage.dao;
 
 import ru.yandex.practicum.filmorate.exceptions.IncorrectIdException;
 import ru.yandex.practicum.filmorate.model.AbstractModel;
