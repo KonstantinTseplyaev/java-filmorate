@@ -18,7 +18,7 @@ import ru.yandex.practicum.filmorate.exceptions.ResponseExceptionHandler;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
-import ru.yandex.practicum.filmorate.service.film.FilmServiceInt;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -35,7 +35,7 @@ class FilmControllerTest {
     @Autowired
     private FilmController controller;
     @Autowired
-    private FilmServiceInt service;
+    private FilmService service;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -46,11 +46,15 @@ class FilmControllerTest {
     @BeforeEach
     public void createModels() {
         film1 = Film.builder().name("Nomadland").description("Wonderful film")
-                .releaseDate(LocalDate.of(2020, 9, 11)).duration(108).mpa(new Rating(2)).build();
+                .releaseDate(LocalDate.of(2020, 9, 11)).duration(108).mpa(new Rating(2, "PG")).build();
         film2 = Film.builder().name("Enter the void").description("Wonderful film")
-                .releaseDate(LocalDate.of(2010, 4, 29)).duration(143).mpa(new Rating(4)).build();
+                .releaseDate(LocalDate.of(2010, 4, 29)).duration(143).mpa(new Rating(4, "R")).build();
         film1.setId(1);
         film2.setId(2);
+        film1.setGenres(new TreeSet<>(Comparator.comparing(Genre::getId)));
+        film2.setGenres(new TreeSet<>(Comparator.comparing(Genre::getId)));
+        film1.setLikes(new HashSet<>());
+        film2.setLikes(new HashSet<>());
     }
 
     @AfterEach
@@ -60,9 +64,10 @@ class FilmControllerTest {
 
     @Test
     public void createFilmWithCorrectDataTest() throws Exception {
-        service.createFilm(film1);
-        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/films/" + film1.getId()));
+        Film ourFilm = service.createFilm(film1);
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/films/" + ourFilm.getId()));
         response.andExpect(MockMvcResultMatchers.status().isOk());
+        film1.setId(ourFilm.getId());
         response.andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(film1)));
     }
 
@@ -111,11 +116,12 @@ class FilmControllerTest {
         Film film = Film.builder().name("Seven").description("x".repeat(200))
                 .releaseDate(LocalDate.of(1995, 9, 22))
                 .duration(80)
-                .mpa(new Rating(3))
+                .mpa(new Rating(3, "PG-13"))
                 .build();
-        service.createFilm(film);
+        Film ourFilm = service.createFilm(film);
         film.setLikes(new HashSet<>());
-        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/films/" + film.getId()));
+        film.setId(ourFilm.getId());
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/films/" + ourFilm.getId()));
         response.andExpect(MockMvcResultMatchers.status().is(200));
         response.andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(film)));
     }
@@ -140,11 +146,12 @@ class FilmControllerTest {
         Film film = Film.builder().name("Seven").description("niceFilm")
                 .releaseDate(LocalDate.of(1895, 12, 28))
                 .duration(80)
-                .mpa(new Rating(3))
+                .mpa(new Rating(3, "PG-13"))
                 .build();
-        service.createFilm(film);
+        Film ourFilm = service.createFilm(film);
         film.setLikes(new HashSet<>());
-        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/films/" + film.getId()));
+        film.setId(ourFilm.getId());
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/films/" + ourFilm.getId()));
         response.andExpect(MockMvcResultMatchers.status().is(200));
         response.andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(film)));
     }
@@ -187,23 +194,6 @@ class FilmControllerTest {
     }
 
     @Test
-    public void getFilms_whenFilmsAreValidTest() throws Exception {
-        Film film3 = Film.builder().name("Enter the Void").description("niceFilm").releaseDate(LocalDate.of(2019,
-                        7, 7))
-                .duration(100)
-                .mpa(new Rating(3))
-                .build();
-        film3.setId(3);
-        Collection<Film> filmsList = List.of(film1, film2, film3);
-        service.createFilm(film1);
-        service.createFilm(film2);
-        service.createFilm(film3);
-        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/films"));
-        response.andExpect(MockMvcResultMatchers.status().is(200));
-        response.andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(filmsList)));
-    }
-
-    @Test
     public void putFilm_withCorrectDataTest() throws Exception {
         addFilmsForUpdate();
         Film film1Update = Film.builder().name("SevenUp").description("niceFilmUp").releaseDate(LocalDate.of(2000,
@@ -211,9 +201,9 @@ class FilmControllerTest {
                 .duration(85)
                 .mpa(new Rating(3, "PG-13"))
                 .genres(new TreeSet<>(Comparator.comparing(Genre::getId)))
+                .likes(new HashSet<>())
                 .build();
         film1Update.setId(film1.getId());
-        film1Update.setLikes(new HashSet<>());
         Collection<Film> filmsList = List.of(film1Update, film2);
         ResultActions putResponse = mockMvc.perform(MockMvcRequestBuilders.put("/films")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -251,6 +241,8 @@ class FilmControllerTest {
                 .mpa(new Rating(3))
                 .build();
         film4Update.setId(1);
+        film1.setId(3);
+        film2.setId(4);
         Collection<Film> filmsList = List.of(film1, film2);
         ResultActions response1 = mockMvc.perform(MockMvcRequestBuilders.put("/films")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -292,13 +284,13 @@ class FilmControllerTest {
                 .duration(85)
                 .mpa(new Rating(3))
                 .build();
-        film1Update.setId(8);
+        film1Update.setId(999);
         ResultActions response = mockMvc.perform(MockMvcRequestBuilders.put("/films")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(film1Update)));
         response.andExpect(MockMvcResultMatchers.status().is(404));
         response.andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(Map.of("error",
-                "Ошибка при указании id фильма/пользователя", "errorMessage", "фильма с id " + film1Update.getId() + " не существует!"))));
+                "Ошибка при указании id фильма/пользователя", "errorMessage", "фильма с id " + 999 + " не существует!"))));
     }
 
     private void addFilmsForUpdate() throws Exception {

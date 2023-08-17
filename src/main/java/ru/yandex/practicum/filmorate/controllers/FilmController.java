@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.film.FilmServiceImp;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
-import ru.yandex.practicum.filmorate.service.film.FilmServiceInt;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -25,10 +25,10 @@ import java.util.List;
 @Controller
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmServiceInt filmService;
+    private final FilmService filmService;
 
     @Autowired
-    public FilmController(FilmService filmService) {
+    public FilmController(FilmServiceImp filmService) {
         this.filmService = filmService;
     }
 

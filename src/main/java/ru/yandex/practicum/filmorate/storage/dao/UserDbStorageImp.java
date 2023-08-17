@@ -3,12 +3,9 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectIdException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.enums.FriendStatus;
-import ru.yandex.practicum.filmorate.storage.dao.UserDbStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,10 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class UserDbStorageImpl implements UserDbStorage {
+public class UserDbStorageImp implements UserDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public UserDbStorageImpl(JdbcTemplate jdbcTemplate) {
+    public UserDbStorageImp(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -41,7 +38,6 @@ public class UserDbStorageImpl implements UserDbStorage {
                 .withTableName("users")
                 .usingGeneratedKeyColumns("user_id");
         long id = simpleJdbcInsert.executeAndReturnKey(toMap(user)).longValue();
-        createFriendsStatuses(id, user);
         user.setId(id);
         return user;
     }
@@ -76,18 +72,6 @@ public class UserDbStorageImpl implements UserDbStorage {
     }
 
     @Override
-    public void addFriend(long id, long friendId, FriendStatus friendStatus) {
-        jdbcTemplate.update("insert into friendship_statuses(user_id, friend_id, status) values (?, ?, ?)", id,
-                friendId, friendStatus.toString());
-    }
-
-    @Override
-    public void deleteFriend(long id, long friendId) {
-        jdbcTemplate.update("delete from friendship_statuses where user_id = ? and friend_id = ?", id, friendId);
-        jdbcTemplate.update("delete from friendship_statuses where user_id = ? and friend_id = ?", friendId, id);
-    }
-
-    @Override
     public List<User> getFriendsList(long id) {
         String sql = "select * from users where user_id in " +
                 "(select friend_id from friendship_statuses where user_id = ?)";
@@ -115,9 +99,8 @@ public class UserDbStorageImpl implements UserDbStorage {
         if (rs.getDate("birthday") != null) {
             birthday = rs.getDate("birthday").toLocalDate();
         }
-        Map<Long, FriendStatus> friendsStatuses = getFriendsStatuses(id);
         User user = User.builder().email(email).login(login).name(name).birthday(birthday)
-                .friendsStatuses(friendsStatuses).build();
+                .build();
         user.setId(id);
         return user;
     }
@@ -129,23 +112,5 @@ public class UserDbStorageImpl implements UserDbStorage {
         values.put("name", user.getName());
         values.put("birthday", user.getBirthday());
         return values;
-    }
-
-    private void createFriendsStatuses(long userId, User user) {
-        for (long frSt : user.getFriendsStatuses().keySet()) {
-            String sqlRequest = "insert into friendship_statuses(user_id, friend_id, status) values (?, ?, ?)";
-            jdbcTemplate.update(sqlRequest, userId, frSt, user.getFriendsStatuses().get(frSt));
-        }
-    }
-
-    private Map<Long, FriendStatus> getFriendsStatuses(long userId) {
-        SqlRowSet statusesRows = jdbcTemplate.queryForRowSet("select friend_id, status from friendship_statuses " +
-                "where user_id = ?", userId);
-        Map<Long, FriendStatus> friendStatusMap = new HashMap<>();
-        while (statusesRows.next()) {
-            friendStatusMap.put((long) statusesRows.getInt("friend_id"),
-                    FriendStatus.valueOf(statusesRows.getString("status")));
-        }
-        return friendStatusMap;
     }
 }

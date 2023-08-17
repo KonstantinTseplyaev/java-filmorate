@@ -10,12 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectIdException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.dao.UserDbStorageImpl;
+import ru.yandex.practicum.filmorate.service.user.UserService;
+import ru.yandex.practicum.filmorate.storage.dao.FriendshipDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.UserDbStorageImp;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -28,8 +29,9 @@ import static ru.yandex.practicum.filmorate.model.enums.FriendStatus.CONFIRMED;
 @Sql(value = {"/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/deleteBd.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class UserDbStorageTest {
-    private final UserDbStorageImpl userDbStorage;
-
+    private final UserDbStorageImp userDbStorage;
+    private final FriendshipDbStorage friendshipDbStorage;
+    private final UserService userService;
     private User firstUser;
     private User secondUser;
     private User thirdUser;
@@ -66,8 +68,8 @@ public class UserDbStorageTest {
 
     @Test
     public void createUser_withAllPropertiesTest() {
-        User newUser = userDbStorage.createUser(firstUser);
-        User actualUser = userDbStorage.findUserById(newUser.getId());
+        User newUser = userService.createUser(firstUser);
+        User actualUser = userService.getUserById(newUser.getId());
         assertThat(actualUser).hasFieldOrPropertyWithValue("email", "myfirstemail@gmail.ru")
                 .hasFieldOrPropertyWithValue("login", "myLog")
                 .hasFieldOrPropertyWithValue("name", "Konstantin")
@@ -77,12 +79,12 @@ public class UserDbStorageTest {
 
     @Test
     public void updateUser_Test() {
-        User newUser = userDbStorage.createUser(firstUser);
+        User newUser = userService.createUser(firstUser);
         User updateUser = User.builder().email("myNEWemail@gmail.ru").login("myLogNEW")
                 .name("KonstantinNEW").birthday(LocalDate.of(2001, 11, 12))
                 .build();
         updateUser.setId(newUser.getId());
-        User actualUser = userDbStorage.updateUser(updateUser);
+        User actualUser = userService.updateUser(updateUser);
         assertThat(actualUser).hasFieldOrPropertyWithValue("email", "myNEWemail@gmail.ru")
                 .hasFieldOrPropertyWithValue("login", "myLogNEW")
                 .hasFieldOrPropertyWithValue("name", "KonstantinNEW")
@@ -129,29 +131,6 @@ public class UserDbStorageTest {
     }
 
     @Test
-    public void addFriend_Test() {
-        User user1 = userDbStorage.createUser(firstUser);
-        User user2 = userDbStorage.createUser(secondUser);
-        userDbStorage.addFriend(user1.getId(), user2.getId(), CONFIRMED);
-        User actualUser1 = userDbStorage.findUserById(user1.getId());
-        assertThat(actualUser1).hasFieldOrPropertyWithValue("friendsStatuses", Map.of(user2.getId(), CONFIRMED));
-        User actualUser2 = userDbStorage.findUserById(user2.getId());
-        assertThat(actualUser2).hasFieldOrPropertyWithValue("friendsStatuses", new HashMap<>());
-    }
-
-    @Test
-    public void deleteFriend_Test() {
-        User user1 = userDbStorage.createUser(firstUser);
-        User user2 = userDbStorage.createUser(secondUser);
-        userDbStorage.addFriend(user1.getId(), user2.getId(), CONFIRMED);
-        User actualUser1 = userDbStorage.findUserById(user1.getId());
-        assertThat(actualUser1).hasFieldOrPropertyWithValue("friendsStatuses", Map.of(user2.getId(), CONFIRMED));
-        userDbStorage.deleteFriend(user1.getId(), user2.getId());
-        User ourUser = userDbStorage.findUserById(user1.getId());
-        assertThat(ourUser).hasFieldOrPropertyWithValue("friendsStatuses", new HashMap<>());
-    }
-
-    @Test
     public void getFriendsList_whenUserHasNotFriendsTest() {
         User user1 = userDbStorage.createUser(firstUser);
         List<User> friends = userDbStorage.getFriendsList(user1.getId());
@@ -163,8 +142,8 @@ public class UserDbStorageTest {
         User user1 = userDbStorage.createUser(firstUser);
         User user2 = userDbStorage.createUser(secondUser);
         User user3 = userDbStorage.createUser(thirdUser);
-        userDbStorage.addFriend(user3.getId(), user1.getId(), CONFIRMED);
-        userDbStorage.addFriend(user3.getId(), user2.getId(), CONFIRMED);
+        friendshipDbStorage.addFriend(user3.getId(), user1.getId(), CONFIRMED);
+        friendshipDbStorage.addFriend(user3.getId(), user2.getId(), CONFIRMED);
         List<User> friends = userDbStorage.getFriendsList(user3.getId());
         assertThat(friends.get(0)).hasFieldOrPropertyWithValue("login", "myLog");
         assertThat(friends.get(1)).hasFieldOrPropertyWithValue("login", "Segg");
@@ -179,8 +158,8 @@ public class UserDbStorageTest {
                 .name("KonstantinNEW").birthday(LocalDate.of(2001, 11, 12))
                 .build();
         updateUser.setId(user1.getId());
-        userDbStorage.addFriend(user3.getId(), user1.getId(), CONFIRMED);
-        userDbStorage.addFriend(user3.getId(), user2.getId(), CONFIRMED);
+        friendshipDbStorage.addFriend(user3.getId(), user1.getId(), CONFIRMED);
+        friendshipDbStorage.addFriend(user3.getId(), user2.getId(), CONFIRMED);
         userDbStorage.updateUser(updateUser);
         List<User> friends = userDbStorage.getFriendsList(user3.getId());
         assertThat(friends.get(0)).hasFieldOrPropertyWithValue("login", "myLogNEW");
@@ -192,8 +171,8 @@ public class UserDbStorageTest {
         User user1 = userDbStorage.createUser(firstUser);
         User user2 = userDbStorage.createUser(secondUser);
         User user3 = userDbStorage.createUser(thirdUser);
-        userDbStorage.addFriend(user3.getId(), user1.getId(), CONFIRMED);
-        userDbStorage.addFriend(user1.getId(), user2.getId(), CONFIRMED);
+        friendshipDbStorage.addFriend(user3.getId(), user1.getId(), CONFIRMED);
+        friendshipDbStorage.addFriend(user1.getId(), user2.getId(), CONFIRMED);
         List<User> commonFriends = userDbStorage.getCommonFriends(user3.getId(), user1.getId());
         Assertions.assertTrue(commonFriends.isEmpty());
     }
@@ -203,8 +182,8 @@ public class UserDbStorageTest {
         User user1 = userDbStorage.createUser(firstUser);
         User user2 = userDbStorage.createUser(secondUser);
         User user3 = userDbStorage.createUser(thirdUser);
-        userDbStorage.addFriend(user3.getId(), user1.getId(), CONFIRMED);
-        userDbStorage.addFriend(user2.getId(), user1.getId(), CONFIRMED);
+        friendshipDbStorage.addFriend(user3.getId(), user1.getId(), CONFIRMED);
+        friendshipDbStorage.addFriend(user2.getId(), user1.getId(), CONFIRMED);
         List<User> commonFriends = userDbStorage.getCommonFriends(user3.getId(), user2.getId());
         assertThat(commonFriends.get(0)).hasFieldOrPropertyWithValue("login", "myLog");
     }

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserServiceImp;
 import ru.yandex.practicum.filmorate.service.user.UserService;
-import ru.yandex.practicum.filmorate.service.user.UserServiceInt;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -24,10 +24,10 @@ import java.util.List;
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    private final UserServiceInt userService;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserServiceImp userService) {
         this.userService = userService;
     }
 

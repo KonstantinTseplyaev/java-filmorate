@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.yandex.practicum.filmorate.controllers.UserController;
 import ru.yandex.practicum.filmorate.exceptions.ResponseExceptionHandler;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.user.UserServiceInt;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -31,7 +31,7 @@ class UserControllerTest {
     @Autowired
     private UserController controller;
     @Autowired
-    private UserServiceInt service;
+    private UserService service;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
