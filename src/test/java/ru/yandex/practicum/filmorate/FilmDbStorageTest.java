@@ -15,9 +15,7 @@ import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorageImp;
-import ru.yandex.practicum.filmorate.storage.dao.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.LikeDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.RatingDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.UserDbStorageImp;
 
 import java.time.LocalDate;
