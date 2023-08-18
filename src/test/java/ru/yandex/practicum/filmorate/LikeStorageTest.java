@@ -14,9 +14,9 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
-import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorageImp;
-import ru.yandex.practicum.filmorate.storage.dao.LikeDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.UserDbStorageImp;
+import ru.yandex.practicum.filmorate.storage.dao.FilmStorageImpl;
+import ru.yandex.practicum.filmorate.storage.dao.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.dao.UserStorageImpl;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -31,13 +31,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Sql(value = {"/schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/deleteBd.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class LikeDbStorageTest {
-    private final FilmDbStorageImp filmDbStorage;
-    private final UserDbStorageImp userDbStorage;
-    private final LikeDbStorage likeDbStorage;
+public class LikeStorageTest {
+    private final FilmStorageImpl filmStorage;
+    private final UserStorageImpl userStorage;
+    private final LikeStorage likeStorage;
     private final FilmService filmService;
     private Film firstFilm;
 
@@ -55,11 +54,11 @@ public class LikeDbStorageTest {
                 .birthday(LocalDate.of(2000, 5, 10))
                 .build();
         user.setFriendsStatuses(new HashMap<>());
-        User user1 = userDbStorage.createUser(user);
-        long film1Id = filmDbStorage.createFilm(firstFilm);
+        User user1 = userStorage.createUser(user);
+        long film1Id = filmStorage.createFilm(firstFilm);
         Film film = filmService.getFilmById(film1Id);
         assertThat(film).hasFieldOrPropertyWithValue("likes", new HashSet<>());
-        likeDbStorage.addLike(film1Id, user1.getId());
+        likeStorage.addLike(film1Id, user1.getId());
         Film film1WithLike = filmService.getFilmById(film1Id);
         assertThat(film1WithLike).hasFieldOrPropertyWithValue("likes", Set.of(user1.getId()));
     }
@@ -70,35 +69,35 @@ public class LikeDbStorageTest {
                 .birthday(LocalDate.of(2000, 5, 10))
                 .build();
         user.setFriendsStatuses(new HashMap<>());
-        User user1 = userDbStorage.createUser(user);
-        assertThatThrownBy(() -> likeDbStorage.addLike(1, user1.getId())).isInstanceOf(IncorrectIdException.class)
+        User user1 = userStorage.createUser(user);
+        assertThatThrownBy(() -> likeStorage.addLike(1, user1.getId())).isInstanceOf(IncorrectIdException.class)
                 .hasMessageContaining("фильма с id " + 1 + " не существует!");
     }
 
     @Test
     public void addLike_duplicateTest() {
-        long film1Id = filmDbStorage.createFilm(firstFilm);
+        long film1Id = filmStorage.createFilm(firstFilm);
         User user = User.builder().name("Nicolas").email("myfirstemail@gmail.ru").login("myLog")
                 .birthday(LocalDate.of(2000, 5, 10))
                 .build();
         user.setFriendsStatuses(new HashMap<>());
-        User user1 = userDbStorage.createUser(user);
-        likeDbStorage.addLike(film1Id, user1.getId());
-        likeDbStorage.addLike(film1Id, user1.getId());
+        User user1 = userStorage.createUser(user);
+        likeStorage.addLike(film1Id, user1.getId());
+        likeStorage.addLike(film1Id, user1.getId());
         Film actualFilm = filmService.getFilmById(film1Id);
         assertThat(actualFilm).hasFieldOrPropertyWithValue("likes", Set.of(user1.getId()));
     }
 
     @Test
     public void deleteLike_fromCorrectFilmIdTest() {
-        long film1Id = filmDbStorage.createFilm(firstFilm);
+        long film1Id = filmStorage.createFilm(firstFilm);
         User user = User.builder().name("Nicolas").email("myfirstemail@gmail.ru").login("myLog")
                 .birthday(LocalDate.of(2000, 5, 10))
                 .build();
         user.setFriendsStatuses(new HashMap<>());
-        User user1 = userDbStorage.createUser(user);
-        likeDbStorage.addLike(film1Id, user1.getId());
-        likeDbStorage.deleteLike(film1Id, user1.getId());
+        User user1 = userStorage.createUser(user);
+        likeStorage.addLike(film1Id, user1.getId());
+        likeStorage.deleteLike(film1Id, user1.getId());
         Film actualFilm = filmService.getFilmById(film1Id);
         Assertions.assertTrue(actualFilm.getLikes().isEmpty());
     }

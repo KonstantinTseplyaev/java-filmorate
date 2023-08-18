@@ -11,10 +11,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component
-public class RatingDbStorage {
+public class RatingStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public RatingDbStorage(JdbcTemplate jdbcTemplate) {
+    public RatingStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

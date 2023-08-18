@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectIdException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.sql.ResultSet;
@@ -14,15 +15,21 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Component
-public class FilmDbStorageImp implements FilmDbStorage {
+public class FilmStorageImpl implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final RatingDbStorage ratingDbStorage;
+    private final RatingStorage ratingStorage;
+    private final GenreStorage genreStorage;
+    private final LikeStorage likeStorage;
 
-    public FilmDbStorageImp(JdbcTemplate jdbcTemplate, RatingDbStorage ratingDbStorage) {
+    public FilmStorageImpl(JdbcTemplate jdbcTemplate, RatingStorage ratingStorage, GenreStorage genreStorage,
+                           LikeStorage likeStorage) {
         this.jdbcTemplate = jdbcTemplate;
-        this.ratingDbStorage = ratingDbStorage;
+        this.ratingStorage = ratingStorage;
+        this.genreStorage = genreStorage;
+        this.likeStorage = likeStorage;
     }
 
     @Override
@@ -89,9 +96,11 @@ public class FilmDbStorageImp implements FilmDbStorage {
         }
         Integer duration = (Integer) rs.getObject("duration");
         int ratingId = rs.getInt("rating_id");
-        Rating rating = ratingDbStorage.findRatingById(ratingId);
+        Rating rating = ratingStorage.findRatingById(ratingId);
+        Set<Genre> genres = genreStorage.getGenres(id);
+        Set<Long> likes = likeStorage.getLikes(id);
         Film film = Film.builder().name(title).description(description).releaseDate(releaseDate).duration(duration)
-                .mpa(rating).build();
+                .mpa(rating).genres(genres).likes(likes).build();
         film.setId(id);
         return film;
     }

@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectIdException;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.dao.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.GenreStorage;
 
 import java.util.List;
 
@@ -19,15 +19,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Sql(value = {"/schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/deleteBd.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class GenreDbStorageTest {
-    private final GenreDbStorage genreDbStorage;
+public class GenreStorageTest {
+    private final GenreStorage genreStorage;
 
     @Test
     public void getAllGenres_Test() {
-        List<Genre> genreList = genreDbStorage.getAllGenres();
+        List<Genre> genreList = genreStorage.getAllGenres();
         assertThat(genreList.get(0)).hasFieldOrPropertyWithValue("id", 1).hasFieldOrPropertyWithValue("name", "Комедия");
         assertThat(genreList.get(1)).hasFieldOrPropertyWithValue("id", 2).hasFieldOrPropertyWithValue("name", "Драма");
         assertThat(genreList.get(2)).hasFieldOrPropertyWithValue("id", 3).hasFieldOrPropertyWithValue("name", "Мультфильм");
@@ -39,13 +38,13 @@ public class GenreDbStorageTest {
 
     @Test
     public void getGenreById_withCorrectIdTest() {
-        Genre genre = genreDbStorage.findGenreById(5);
+        Genre genre = genreStorage.findGenreById(5);
         assertThat(genre).hasFieldOrPropertyWithValue("name", "Документальный");
     }
 
     @Test
     public void getGenreById_withIncorrectIdTest() {
-        assertThatThrownBy(() -> genreDbStorage.findGenreById(100)).isInstanceOf(IncorrectIdException.class)
+        assertThatThrownBy(() -> genreStorage.findGenreById(100)).isInstanceOf(IncorrectIdException.class)
                 .hasMessageContaining("жанра с id " + 100 + " не существует!");
     }
 }

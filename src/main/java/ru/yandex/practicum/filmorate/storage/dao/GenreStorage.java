@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-public class GenreDbStorage {
+public class GenreStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public GenreDbStorage(JdbcTemplate jdbcTemplate) {
+    public GenreStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectIdException;
 import ru.yandex.practicum.filmorate.model.Rating;
-import ru.yandex.practicum.filmorate.storage.dao.RatingDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.RatingStorage;
 
 import java.util.List;
 
@@ -19,15 +19,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Sql(value = {"/schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/deleteBd.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class RatingDbStorageTest {
-    private final RatingDbStorage ratingDbStorage;
+public class RatingStorageTest {
+    private final RatingStorage ratingStorage;
 
     @Test
     public void getAllRatings_Test() {
-        List<Rating> ratingList = ratingDbStorage.getAllRatings();
+        List<Rating> ratingList = ratingStorage.getAllRatings();
         assertThat(ratingList.get(0)).hasFieldOrPropertyWithValue("id", 1).hasFieldOrPropertyWithValue("name", "G");
         assertThat(ratingList.get(1)).hasFieldOrPropertyWithValue("id", 2).hasFieldOrPropertyWithValue("name", "PG");
         assertThat(ratingList.get(2)).hasFieldOrPropertyWithValue("id", 3).hasFieldOrPropertyWithValue("name", "PG-13");
@@ -38,13 +37,13 @@ public class RatingDbStorageTest {
 
     @Test
     public void getRatingById_withCorrectIdTest() {
-        Rating rating = ratingDbStorage.findRatingById(2);
+        Rating rating = ratingStorage.findRatingById(2);
         assertThat(rating).hasFieldOrPropertyWithValue("name", "PG");
     }
 
     @Test
     public void getRatingById_withIncorrectIdTest() {
-        assertThatThrownBy(() -> ratingDbStorage.findRatingById(100)).isInstanceOf(IncorrectIdException.class)
+        assertThatThrownBy(() -> ratingStorage.findRatingById(100)).isInstanceOf(IncorrectIdException.class)
                 .hasMessageContaining("рейтинга с id " + 100 + " не существует!");
     }
 }

@@ -9,8 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
-import ru.yandex.practicum.filmorate.storage.dao.FriendshipDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.UserDbStorageImp;
+import ru.yandex.practicum.filmorate.storage.dao.FriendshipStorage;
+import ru.yandex.practicum.filmorate.storage.dao.UserStorageImpl;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -22,12 +22,11 @@ import static ru.yandex.practicum.filmorate.model.enums.FriendStatus.CONFIRMED;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Sql(value = {"/schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/deleteBd.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class FriendshipDbStorageTest {
-    private final UserDbStorageImp userDbStorage;
-    private final FriendshipDbStorage friendshipDbStorage;
+public class FriendshipStorageTest {
+    private final UserStorageImpl userStorage;
+    private final FriendshipStorage friendshipStorage;
     private final UserService userService;
     private User firstUser;
     private User secondUser;
@@ -46,9 +45,9 @@ public class FriendshipDbStorageTest {
 
     @Test
     public void addFriend_Test() {
-        User user1 = userDbStorage.createUser(firstUser);
-        User user2 = userDbStorage.createUser(secondUser);
-        friendshipDbStorage.addFriend(user1.getId(), user2.getId(), CONFIRMED);
+        User user1 = userStorage.createUser(firstUser);
+        User user2 = userStorage.createUser(secondUser);
+        friendshipStorage.addFriend(user1.getId(), user2.getId(), CONFIRMED);
         User actualUser1 = userService.getUserById(user1.getId());
         assertThat(actualUser1).hasFieldOrPropertyWithValue("friendsStatuses", Map.of(user2.getId(), CONFIRMED));
         User actualUser2 = userService.getUserById(user2.getId());
@@ -57,12 +56,12 @@ public class FriendshipDbStorageTest {
 
     @Test
     public void deleteFriend_Test() {
-        User user1 = userDbStorage.createUser(firstUser);
-        User user2 = userDbStorage.createUser(secondUser);
-        friendshipDbStorage.addFriend(user1.getId(), user2.getId(), CONFIRMED);
+        User user1 = userStorage.createUser(firstUser);
+        User user2 = userStorage.createUser(secondUser);
+        friendshipStorage.addFriend(user1.getId(), user2.getId(), CONFIRMED);
         User actualUser1 = userService.getUserById(user1.getId());
         assertThat(actualUser1).hasFieldOrPropertyWithValue("friendsStatuses", Map.of(user2.getId(), CONFIRMED));
-        friendshipDbStorage.deleteFriend(user1.getId(), user2.getId());
+        friendshipStorage.deleteFriend(user1.getId(), user2.getId());
         User ourUser = userService.getUserById(user1.getId());
         assertThat(ourUser).hasFieldOrPropertyWithValue("friendsStatuses", new HashMap<>());
     }

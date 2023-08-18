@@ -6,12 +6,12 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.GenreDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.LikeDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.UserDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorageImp;
-import ru.yandex.practicum.filmorate.storage.dao.UserDbStorageImp;
+import ru.yandex.practicum.filmorate.storage.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.dao.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.dao.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.dao.UserStorage;
+import ru.yandex.practicum.filmorate.storage.dao.FilmStorageImpl;
+import ru.yandex.practicum.filmorate.storage.dao.UserStorageImpl;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -22,16 +22,16 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Service
-public class FilmServiceImp implements FilmService {
+public class FilmServiceImpl implements FilmService {
     private static final LocalDate LOWER_DATE_LIMIT = LocalDate.of(1895, 12, 28);
-    private final FilmDbStorage filmStorage;
-    private final GenreDbStorage genreStorage;
-    private final LikeDbStorage likeStorage;
-    private final UserDbStorage userStorage;
+    private final FilmStorage filmStorage;
+    private final GenreStorage genreStorage;
+    private final LikeStorage likeStorage;
+    private final UserStorage userStorage;
 
     @Autowired
-    public FilmServiceImp(FilmDbStorageImp filmStorage, UserDbStorageImp userStorage, GenreDbStorage genreStorage,
-                          LikeDbStorage likeStorage) {
+    public FilmServiceImpl(FilmStorageImpl filmStorage, UserStorageImpl userStorage, GenreStorage genreStorage,
+                           LikeStorage likeStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.genreStorage = genreStorage;
@@ -48,10 +48,7 @@ public class FilmServiceImp implements FilmService {
         long newFilmId = filmStorage.createFilm(film);
         genreStorage.createGenres(newFilmId, film);
         likeStorage.createLikes(newFilmId, film);
-        Film ourFilm = filmStorage.findFilmById(newFilmId);
-        ourFilm.setGenres(genreStorage.getGenres(newFilmId));
-        ourFilm.setLikes(likeStorage.getLikes(newFilmId));
-        return ourFilm;
+        return filmStorage.findFilmById(newFilmId);
     }
 
     @Override
@@ -64,20 +61,12 @@ public class FilmServiceImp implements FilmService {
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             genreStorage.createGenres(film.getId(), film);
         }
-        Film ourFilm = filmStorage.findFilmById(film.getId());
-        ourFilm.setGenres(genreStorage.getGenres(film.getId()));
-        ourFilm.setLikes(likeStorage.getLikes(film.getId()));
-        return ourFilm;
+        return filmStorage.findFilmById(film.getId());
     }
 
     @Override
     public Collection<Film> getAllFilms() {
-        List<Film> films = filmStorage.findAllFilms();
-        for (Film film : films) {
-            film.setGenres(genreStorage.getGenres(film.getId()));
-            film.setLikes(likeStorage.getLikes(film.getId()));
-        }
-        return films;
+        return filmStorage.findAllFilms();
     }
 
     @Override
@@ -92,10 +81,7 @@ public class FilmServiceImp implements FilmService {
 
     @Override
     public Film getFilmById(long id) {
-        Film film = filmStorage.findFilmById(id);
-        film.setGenres(genreStorage.getGenres(id));
-        film.setLikes(likeStorage.getLikes(id));
-        return film;
+        return filmStorage.findFilmById(id);
     }
 
     @Override
@@ -112,12 +98,7 @@ public class FilmServiceImp implements FilmService {
 
     @Override
     public List<Film> getTopFilms(int count) {
-        List<Film> topFilms = filmStorage.getTopFilms(count);
-        for (Film film : topFilms) {
-            film.setGenres(genreStorage.getGenres(film.getId()));
-            film.setLikes(likeStorage.getLikes(film.getId()));
-        }
-        return topFilms;
+        return filmStorage.getTopFilms(count);
     }
 
     private void checkReleaseDate(Film film) {

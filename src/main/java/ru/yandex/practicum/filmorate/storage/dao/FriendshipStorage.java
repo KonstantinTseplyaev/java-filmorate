@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class FriendshipDbStorage {
+public class FriendshipStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public FriendshipDbStorage(JdbcTemplate jdbcTemplate) {
+    public FriendshipStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

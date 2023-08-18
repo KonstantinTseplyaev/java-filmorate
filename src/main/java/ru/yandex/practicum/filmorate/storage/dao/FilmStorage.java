@@ -4,7 +4,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
 
-public interface FilmDbStorage {
+public interface FilmStorage {
     Film findFilmById(long id);
 
     long createFilm(Film film);

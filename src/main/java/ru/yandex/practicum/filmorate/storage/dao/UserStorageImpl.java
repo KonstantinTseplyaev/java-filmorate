@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectIdException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.FriendStatus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,11 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class UserDbStorageImp implements UserDbStorage {
+public class UserStorageImpl implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final FriendshipStorage friendshipStorage;
 
-    public UserDbStorageImp(JdbcTemplate jdbcTemplate) {
+    public UserStorageImpl(JdbcTemplate jdbcTemplate, FriendshipStorage friendshipStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.friendshipStorage = friendshipStorage;
     }
 
     @Override
@@ -95,12 +98,13 @@ public class UserDbStorageImp implements UserDbStorage {
         String email = rs.getString("email");
         String login = rs.getString("login");
         String name = rs.getString("name");
+        Map<Long, FriendStatus> friendsStatuses = friendshipStorage.getFriendsStatuses(id);
         LocalDate birthday = null;
         if (rs.getDate("birthday") != null) {
             birthday = rs.getDate("birthday").toLocalDate();
         }
         User user = User.builder().email(email).login(login).name(name).birthday(birthday)
-                .build();
+                .friendsStatuses(friendsStatuses).build();
         user.setId(id);
         return user;
     }

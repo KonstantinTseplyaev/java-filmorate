@@ -11,10 +11,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class LikeDbStorage {
+public class LikeStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public LikeDbStorage(JdbcTemplate jdbcTemplate) {
+    public LikeStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

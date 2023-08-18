@@ -3,7 +3,7 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
 
-public interface UserDbStorage {
+public interface UserStorage {
     User findUserById(long id);
 
     User createUser(User user);

@@ -7,9 +7,9 @@ import ru.yandex.practicum.filmorate.exceptions.RejectedFriendRequestException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.enums.FriendStatus;
-import ru.yandex.practicum.filmorate.storage.dao.FriendshipDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.UserDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.UserDbStorageImp;
+import ru.yandex.practicum.filmorate.storage.dao.FriendshipStorage;
+import ru.yandex.practicum.filmorate.storage.dao.UserStorage;
+import ru.yandex.practicum.filmorate.storage.dao.UserStorageImpl;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,15 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class UserServiceImp implements UserService {
-    private final UserDbStorage userStorage;
-
-    private final FriendshipDbStorage friendshipDbStorage;
+public class UserServiceImpl implements UserService {
+    private final UserStorage userStorage;
+    private final FriendshipStorage friendshipStorage;
 
     @Autowired
-    public UserServiceImp(UserDbStorageImp userStorage, FriendshipDbStorage friendshipDbStorage) {
+    public UserServiceImpl(UserStorageImpl userStorage, FriendshipStorage friendshipStorage) {
         this.userStorage = userStorage;
-        this.friendshipDbStorage = friendshipDbStorage;
+        this.friendshipStorage = friendshipStorage;
     }
 
     @Override
@@ -39,24 +38,18 @@ public class UserServiceImp implements UserService {
     public User updateUser(User user) {
         checkUsersNameAndLogin(user);
         User updatedUser = userStorage.updateUser(user);
-        updatedUser.setFriendsStatuses(friendshipDbStorage.getFriendsStatuses(user.getId()));
+        updatedUser.setFriendsStatuses(friendshipStorage.getFriendsStatuses(user.getId()));
         return updatedUser;
     }
 
     @Override
     public Collection<User> getAllUsers() {
-        List<User> users = userStorage.findAllUsers();
-        for (User user : users) {
-            user.setFriendsStatuses(friendshipDbStorage.getFriendsStatuses(user.getId()));
-        }
-        return users;
+        return userStorage.findAllUsers();
     }
 
     @Override
     public User getUserById(long id) {
-        User user = userStorage.findUserById(id);
-        user.setFriendsStatuses(friendshipDbStorage.getFriendsStatuses(id));
-        return user;
+        return userStorage.findUserById(id);
     }
 
     @Override
@@ -74,7 +67,7 @@ public class UserServiceImp implements UserService {
         checkFriendsId(id, friendId);
         userStorage.findUserById(id);
         userStorage.findUserById(friendId);
-        Map<Long, FriendStatus> frStMap = friendshipDbStorage.getFriendsStatuses(id);
+        Map<Long, FriendStatus> frStMap = friendshipStorage.getFriendsStatuses(id);
         if (frStMap.containsKey(friendId)) {
             checkFriendStatus(frStMap.get(friendId), id);
         }
@@ -87,7 +80,7 @@ public class UserServiceImp implements UserService {
             frStMap.put(id, FriendStatus.CONFIRMED);
         }*/
         frStMap.put(id, FriendStatus.CONFIRMED);
-        friendshipDbStorage.addFriend(id, friendId, frStMap.get(id));
+        friendshipStorage.addFriend(id, friendId, frStMap.get(id));
     }
 
     @Override
@@ -95,31 +88,23 @@ public class UserServiceImp implements UserService {
         userStorage.findUserById(id);
         userStorage.findUserById(friendId);
         checkFriendsId(id, friendId);
-        if (!friendshipDbStorage.getFriendsStatuses(id).containsKey(friendId) ||
-                friendshipDbStorage.getFriendsStatuses(id).get(friendId) != FriendStatus.CONFIRMED) {
+        if (!friendshipStorage.getFriendsStatuses(id).containsKey(friendId) ||
+                friendshipStorage.getFriendsStatuses(id).get(friendId) != FriendStatus.CONFIRMED) {
             throw new IncorrectIdException("у вас нет друга под таким id");
         } else {
-            friendshipDbStorage.deleteFriend(id, friendId);
+            friendshipStorage.deleteFriend(id, friendId);
         }
     }
 
     @Override
     public List<User> getFriendsList(long id) {
-        List<User> users = userStorage.getFriendsList(id);
-        for (User user : users) {
-            user.setFriendsStatuses(friendshipDbStorage.getFriendsStatuses(user.getId()));
-        }
-        return users;
+        return userStorage.getFriendsList(id);
     }
 
     @Override
     public List<User> getCommonFriends(long id, long otherId) {
         checkFriendsId(id, otherId);
-        List<User> users = userStorage.getCommonFriends(id, otherId);
-        for (User user : users) {
-            user.setFriendsStatuses(friendshipDbStorage.getFriendsStatuses(user.getId()));
-        }
-        return users;
+        return userStorage.getCommonFriends(id, otherId);
     }
 
     private void checkUsersNameAndLogin(User user) {
